@@ -53,15 +53,21 @@ export default function Profile() {
       {/* Bottom Navigation */}
       <div className="bg-red-950 h-20 flex items-center justify-center px-4">
         <nav className="flex items-center justify-center gap-8 md:gap-12 w-full max-w-md">
-          <button className="bg-white text-black px-5 py-2 rounded text-xs font-normal hover:bg-gray-100 transition-colors">
+          <Link
+            href="/people"
+            className="text-white text-xs font-normal hover:text-gray-300 transition-colors"
+          >
             People
-          </button>
-          <button className="text-white text-xs font-normal hover:text-gray-300 transition-colors">
+          </Link>
+          <Link
+            href="/"
+            className="text-white text-xs font-normal hover:text-gray-300 transition-colors"
+          >
             Gallery
-          </button>
-          <button className="text-white text-xs font-normal hover:text-gray-300 transition-colors">
+          </Link>
+          <div className="bg-white text-black px-5 py-2 rounded text-xs font-normal">
             My Profile
-          </button>
+          </div>
         </nav>
       </div>
     </div>
