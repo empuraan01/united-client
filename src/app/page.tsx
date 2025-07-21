@@ -43,26 +43,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Bottom navigation */}
-      <div className="relative z-10 bg-red-950 h-20 flex items-center justify-center px-4">
-        <nav className="flex items-center justify-center gap-8 md:gap-12 w-full max-w-md">
-          <Link
-            href="/people"
-            className="bg-white text-black px-5 py-2 rounded text-xs font-normal hover:bg-gray-100 transition-colors"
-          >
-            People
-          </Link>
-          <button className="text-white text-xs font-normal hover:text-gray-300 transition-colors">
-            Gallery
-          </button>
-          <Link
-            href="/profile"
-            className="text-white text-xs font-normal hover:text-gray-300 transition-colors"
-          >
-            My Profile
-          </Link>
-        </nav>
-      </div>
+
     </div>
   );
 }
