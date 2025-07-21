@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -45,15 +46,21 @@ export default function Home() {
       {/* Bottom navigation */}
       <div className="relative z-10 bg-red-950 h-20 flex items-center justify-center px-4">
         <nav className="flex items-center justify-center gap-8 md:gap-12 w-full max-w-md">
-          <button className="bg-white text-black px-5 py-2 rounded text-xs font-normal hover:bg-gray-100 transition-colors">
+          <Link
+            href="/people"
+            className="bg-white text-black px-5 py-2 rounded text-xs font-normal hover:bg-gray-100 transition-colors"
+          >
             People
-          </button>
+          </Link>
           <button className="text-white text-xs font-normal hover:text-gray-300 transition-colors">
             Gallery
           </button>
-          <button className="text-white text-xs font-normal hover:text-gray-300 transition-colors">
+          <Link
+            href="/profile"
+            className="text-white text-xs font-normal hover:text-gray-300 transition-colors"
+          >
             My Profile
-          </button>
+          </Link>
         </nav>
       </div>
     </div>
