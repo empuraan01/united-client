@@ -3,16 +3,7 @@ import Link from "next/link";
 export default function Profile() {
   return (
     <div className="min-h-screen bg-black flex flex-col">
-      {/* Header with back button */}
-      <div className="px-6 py-4">
-        <Link
-          href="/people"
-          className="text-white text-xs font-normal flex items-center gap-1 hover:text-gray-300 transition-colors"
-        >
-          <span>{"<"}</span>
-          <span>People</span>
-        </Link>
-      </div>
+
 
       {/* Profile Content */}
       <div className="flex-1 flex flex-col items-center px-6 py-8">
