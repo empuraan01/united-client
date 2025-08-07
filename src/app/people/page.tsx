@@ -1,25 +1,63 @@
 "use client";
 
+import { useState, useMemo } from "react";
 import Link from "next/link";
-import { useState } from "react";
-
-const people = [
-  { id: "nick3", name: "Nick3", year: "2023" },
-  { id: "nick1", name: "Nick1", year: "2023" },
-  { id: "nick2", name: "Nick2", year: "2023" },
-  { id: "nick5", name: "Nick5", year: "2023" },
-  { id: "nick6", name: "Nick6", year: "2023" },
-  { id: "nick8", name: "Nick8", year: "2023" },
-  { id: "dev", name: "Dev", year: "2023" },
-  { id: "ujesha", name: "Ujesha", year: "2023" },
-  { id: "sreehari", name: "Sreehari", year: "2023" },
-  { id: "megh-sha", name: "Megh Sha", year: "2023" },
-  { id: "sabhya", name: "Sabhya", year: "2023" },
-  { id: "amitesh", name: "Amitesh", year: "2023" },
-];
+import { useUsers } from "@/hooks/useUsers";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function PeoplePage() {
   const [sortBy, setSortBy] = useState("year-latest");
+  const { users, loading, error } = useUsers();
+  const { isAuthenticated } = useAuth();
+
+  // Sort users based on selected criteria
+  const sortedUsers = useMemo(() => {
+    if (!users) return [];
+    
+    const sorted = [...users];
+    switch (sortBy) {
+      case "year-latest":
+        return sorted.sort((a, b) => (b.year || 0) - (a.year || 0));
+      case "year-oldest":
+        return sorted.sort((a, b) => (a.year || 0) - (b.year || 0));
+      case "name":
+        return sorted.sort((a, b) => (a.displayName || '').localeCompare(b.displayName || ''));
+      default:
+        return sorted;
+    }
+  }, [users, sortBy]);
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-white text-center">
+          <h1 className="text-xl mb-4">Please sign in to view people</h1>
+          <Link href="/" className="text-red-500 hover:text-red-400">
+            Go to sign in
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-white">Loading people...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-white text-center">
+          <h1 className="text-xl mb-4">Error loading people</h1>
+          <p className="text-red-500">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black flex flex-col">
@@ -54,32 +92,49 @@ export default function PeoplePage() {
       {/* People Grid */}
       <div className="flex-1 px-4 md:px-8 pb-24">
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4 max-w-6xl mx-auto">
-          {people.map((person) => (
+          {sortedUsers.map((person) => (
             <Link 
-              key={person.id} 
-              href="/profile"
+              key={person._id} 
+              href={`/profile/${person._id}`}
               className="group"
             >
               <div className="bg-zinc-900 border border-red-900 rounded p-3 md:p-4 hover:bg-zinc-800 transition-colors cursor-pointer">
                 <div className="flex flex-col items-center">
                   {/* Year */}
                   <div className="text-white text-xs mb-2 text-center">
-                    {person.year}
+                    {person.year || 'N/A'}
                   </div>
                   
                   {/* Profile Picture */}
-                  <div className="w-12 h-12 md:w-16 md:h-16 bg-white rounded-full mb-2"></div>
+                  <div className="w-12 h-12 md:w-16 md:h-16 bg-white rounded-full mb-2 overflow-hidden">
+                    {person.hasProfilePicture && (
+                      <img 
+                        src={`${process.env.NEXT_PUBLIC_API_URL}/profile/picture/${person._id}`}
+                        alt={person.displayName}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
+                  </div>
                   
                   {/* Name */}
                   <div className="text-white text-xs md:text-sm text-center mb-2 group-hover:text-gray-300 transition-colors">
-                    {person.name}
+                    {person.nickname || person.displayName}
                   </div>
                   
-                  {/* Rating/Status Indicators */}
+                  {/* Emojis/Status Indicators */}
                   <div className="flex gap-1">
-                    <div className="w-3 h-3 md:w-4 md:h-4 bg-white rounded-full"></div>
-                    <div className="w-3 h-3 md:w-4 md:h-4 bg-white rounded-full"></div>
-                    <div className="w-3 h-3 md:w-4 md:h-4 bg-white rounded-full"></div>
+                    {person.emojis && person.emojis.slice(0, 3).map((emoji, index) => (
+                      <div key={index} className="w-3 h-3 md:w-4 md:h-4 bg-white rounded-full flex items-center justify-center text-xs">
+                        {emoji}
+                      </div>
+                    ))}
+                    {(!person.emojis || person.emojis.length === 0) && (
+                      <>
+                        <div className="w-3 h-3 md:w-4 md:h-4 bg-white rounded-full"></div>
+                        <div className="w-3 h-3 md:w-4 md:h-4 bg-white rounded-full"></div>
+                        <div className="w-3 h-3 md:w-4 md:h-4 bg-white rounded-full"></div>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -101,7 +156,7 @@ export default function PeoplePage() {
             Gallery
           </Link>
           <Link 
-            href="/profile" 
+            href="/my-profile" 
             className="text-white text-xs font-normal hover:text-gray-300 transition-colors"
           >
             My Profile
